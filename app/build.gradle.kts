@@ -72,5 +72,7 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
     // ViewModel and LiveData for MVVM architecture
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-livedata:2.7.0")
+
+    // Koil
+    implementation("io.coil-kt:coil-compose:2.6.0")
 }

@@ -10,23 +10,39 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.newsapp.components.NewsHorizontalCard
 import com.example.newsapp.components.NewsVerticalCard
+import com.example.newsapp.components.shimmerEffect
+import com.example.newsapp.model.LoadingState
+import com.example.newsapp.viewModel.NewsViewModel
 
 @Preview
 @Composable
 fun HomeScreen() {
     val rowScrollState = rememberScrollState()
     val parentScrollState = rememberScrollState()
+    val viewModel = NewsViewModel()
+    val items = viewModel.articles.collectAsState()
+
+    LaunchedEffect(Unit) {
+        viewModel.getHeadlines()
+    }
 
     Box(
       modifier = Modifier
@@ -44,14 +60,20 @@ fun HomeScreen() {
                fontWeight = FontWeight.Bold
            )
            Spacer(modifier = Modifier.height(8.dp))
-           Row(
+           LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier
-                    .horizontalScroll(rowScrollState)
+               userScrollEnabled = true
             ) {
-                NewsHorizontalCard()
-                NewsHorizontalCard()
-                NewsHorizontalCard()
+               if(viewModel.headlinesState.value == LoadingState.LOADING) {
+                   items(2) {it ->
+                       Box(modifier = Modifier.width(280.dp).height(190.dp).clip(RoundedCornerShape(10.dp)).shimmerEffect())
+                   }
+               } else {
+                   items(items.value) { article ->
+                       NewsHorizontalCard(article = article)
+                   }
+               }
+
             }
 
            Spacer(modifier = Modifier.height(24.dp))
