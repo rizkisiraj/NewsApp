@@ -27,9 +27,9 @@ import com.example.newsapp.R
 
 
 @Composable
-fun NewsHorizontalCard(article: Article) {
+fun NewsHorizontalCard(article: Article, modifier: Modifier = Modifier) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .width(280.dp)
             .height(190.dp)
             .clip(RoundedCornerShape(10.dp))

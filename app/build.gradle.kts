@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -75,4 +76,13 @@ dependencies {
 
     // Koil
     implementation("io.coil-kt:coil-compose:2.6.0")
+
+    // Navigation
+    implementation("androidx.navigation:navigation-compose:2.7.7")
+    //Room
+    implementation("androidx.room:room-runtime:2.5.2")
+    ksp("androidx.room:room-compiler:2.5.2")
+    implementation("androidx.room:room-ktx:2.5.2")
+
+
 }

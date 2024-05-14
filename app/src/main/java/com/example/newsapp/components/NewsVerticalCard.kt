@@ -22,20 +22,27 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.example.newsapp.R
+import com.example.newsapp.model.Article
+import com.example.newsapp.utils.Formatter
 
-@Preview
+
 @Composable
 fun NewsVerticalCard(
-
+    article: Article,
+    modifier: Modifier = Modifier
 ) {
     Row(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = modifier
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.placeholder),
-            contentDescription = "Placeholder Image",
+        AsyncImage(
+            model = article.urlToImage,
+            placeholder = painterResource(id = R.drawable.placeholder),
+            contentDescription = null,
             contentScale = ContentScale.Crop,
+            error = painterResource(id = R.drawable.failed_placeholder),
             modifier = Modifier
                 .width(100.dp)
                 .height(100.dp)
@@ -47,19 +54,19 @@ fun NewsVerticalCard(
                 .height(100.dp)
         ) {
             Text(
-                text = "Education",
+                text = "Sport",
                 fontSize = 14.sp,
                 color = Color.Gray
             )
             Text(
-                text = "Susilo Bambang Yudhoyono terlihat sedang menaiki kapal selam dan Jokowi sedang menunggangi kuda",
+                text = article.title,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 maxLines = 2,
                 overflow = TextOverflow.Ellipsis
             )
             Text(
-                text = "July 14, 2023",
+                text = Formatter.formatDate(article.publishedAt),
                 fontSize = 14.sp,
                 color = Color.Gray
             )
