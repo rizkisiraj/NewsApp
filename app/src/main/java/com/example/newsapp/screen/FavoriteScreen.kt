@@ -1,5 +1,6 @@
 package com.example.newsapp.screen
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,13 +16,14 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavHostController
 import com.example.newsapp.components.NewsVerticalCard
 import com.example.newsapp.viewModel.AppViewModelProvider
 import com.example.newsapp.viewModel.DetailViewModel
 import com.example.newsapp.viewModel.FavoriteViewModel
 
 @Composable
-fun FavoriteScreen() {
+fun FavoriteScreen(navController: NavHostController) {
     val viewModel: FavoriteViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val articles by viewModel.favoriteArticles.collectAsState(initial = emptyList())
 
@@ -41,7 +43,10 @@ fun FavoriteScreen() {
                 )
             }
             items(articles) {article ->
-                NewsVerticalCard(article = article)
+                NewsVerticalCard(article = article, modifier = Modifier.clickable {
+                    val articleString: String = article.id.toString()
+                    navController.navigate("detail/favorite/${articleString}")
+                })
             }
         }
     }

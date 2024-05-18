@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -26,6 +27,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,19 +62,16 @@ import kotlinx.coroutines.launch
 @Composable
 fun DetailScreen(
     navController: NavHostController,
-    newsViewModel: NewsViewModel,
-    newsUUID: String
+    detailViewModel: DetailViewModel
 ) {
-    val detailViewModel: DetailViewModel = viewModel(factory = AppViewModelProvider.Factory)
     val coroutineScope = rememberCoroutineScope()
-    val article: MutableState<Article?> = remember { mutableStateOf(null) }
+    val article by detailViewModel.article.collectAsState(initial = null)
+    val isLiked = detailViewModel.isLiked.collectAsState()
 
-    LaunchedEffect(Unit) {
-        var dumpArticle = newsViewModel.headlineArticles.value.find { it.id.toString() == newsUUID }
-        if(dumpArticle == null) {
-            dumpArticle = newsViewModel.recommendedArticles.value.find { it.id.toString() == newsUUID }
+    LaunchedEffect(article) {
+        article?.let {
+            detailViewModel.checkIfIsLiked(article!!.title)
         }
-        article.value = dumpArticle
     }
 
     Box(
@@ -94,16 +93,21 @@ fun DetailScreen(
                 actions = {
                           IconButton(onClick = {
                               coroutineScope.launch {
-                                  detailViewModel.saveItem(article.value!!)
+                                  detailViewModel.saveItem(article!!)
                               }
-                          }) {
-                              Icon(painter = painterResource(R.drawable.baseline_star_outline_24), contentDescription = null)
+                          }, enabled = !isLiked.value) {
+                              if(isLiked.value) {
+                                  Icon(Icons.Filled.Star, contentDescription = null)
+                              } else {
+                                  Icon(painter = painterResource(R.drawable.baseline_star_outline_24), contentDescription = null)
+                              }
+
                           }
                 },
                 colors = TopAppBarDefaults.smallTopAppBarColors()
             )
             Text(
-                article.value?.title ?: "",
+                article?.title ?: "",
                 fontSize = 24.sp,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
@@ -111,7 +115,7 @@ fun DetailScreen(
             Spacer(modifier = Modifier.height(8.dp))
 
             AsyncImage(
-                model = article.value?.urlToImage ?: "",
+                model = article?.urlToImage ?: "",
                 placeholder = painterResource(id = R.drawable.placeholder),
                 error = painterResource(id = R.drawable.failed_placeholder),
                 contentDescription = "Placeholder Image",
@@ -135,12 +139,12 @@ fun DetailScreen(
                     .padding(horizontal = 16.dp)
             ) {
                 Text(
-                    text = article.value?.author ?: "",
+                    text = article?.author ?: "",
                     fontSize = 14.sp,
                     color = Color.Gray,
                 )
                 Text(
-                    text = Formatter.formatDate(dateString = article.value?.publishedAt ?: ""),
+                    text = Formatter.formatDate(dateString = article?.publishedAt ?: ""),
                     fontSize = 14.sp,
                     color = Color.Gray,
                 )
@@ -149,7 +153,7 @@ fun DetailScreen(
             Spacer(modifier = Modifier.height(16.dp))
 
             Text(
-                text = article.value?.description ?: "",
+                text = article?.description ?: "",
                 textAlign = TextAlign.Justify,
                 modifier = Modifier.padding(horizontal = 16.dp)
             )

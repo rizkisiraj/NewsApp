@@ -75,7 +75,7 @@ fun HomeScreen(navController: NavHostController, viewModel: NewsViewModel) {
                        items(headlines.value) { article ->
                            NewsHorizontalCard(article = article, modifier = Modifier.clickable {
                                val articleString: String = article.id.toString()
-                               navController.navigate("detail/${articleString}")
+                               navController.navigate("detail/news/${articleString}")
                            })
                        }
                    }
@@ -95,7 +95,7 @@ fun HomeScreen(navController: NavHostController, viewModel: NewsViewModel) {
                items(news.value) {article ->
                    NewsVerticalCard(article = article, modifier = Modifier.clickable {
                        val articleString: String = article.id.toString()
-                       navController.navigate("detail/${articleString}")
+                       navController.navigate("detail/news/${articleString}")
                    })
                    Spacer(modifier = Modifier.height(16.dp))
                }

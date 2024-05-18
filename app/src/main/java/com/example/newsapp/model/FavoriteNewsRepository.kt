@@ -1,6 +1,7 @@
 package com.example.newsapp.model
 
 import kotlinx.coroutines.flow.Flow
+import java.util.UUID
 
 /**
  * Repository that provides insert, update, delete, and retrieve of [Activity] from a given data source.
@@ -14,7 +15,9 @@ interface ActivitiesRepository {
     /**
      * Retrieve an item from the given data source that matches with the [id].
      */
-    fun getActivityStream(id: Int): Flow<Article?>
+    fun getActivityStream(id: UUID): Flow<Article?>
+
+    fun getActivityStream(title: String): Flow<Article?>
 
     /**
      * Insert item in the data source
